@@ -1,0 +1,3 @@
+id:1:name:Alex:salary:5500:nextId:4:
+id:2:name:Pit:salary:8800:nextId:4:
+id:3:name:Max:salary:7200:nextId:4:

@@ -1,0 +1,13 @@
+TestUser
+
+name Max
+age 15
+salary 255
+
+getName
+setName
+getSalary
+setSalary
+getAge
+setAge
+
