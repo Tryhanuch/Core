@@ -16,9 +16,7 @@ public class FileDataMapper implements DataMapper {
         String className = o.getClass().getSimpleName();
         String confFileName = className + CONF_EXT;
         String dataFileName = className + DATA_EXT;
-
         File dataFile = new File(getPath() + dataFileName);
-
         FileWriter fw = null;
         try {
             fw = new FileWriter(dataFile, true);
@@ -27,7 +25,6 @@ public class FileDataMapper implements DataMapper {
         }
 
         List<String> fieldsName = loadConfigFile(confFileName);
-
         ArrayList<Field> fields = new ArrayList<>();
 
         for (int i = 0; i < fieldsName.size(); i++) {
@@ -56,15 +53,12 @@ public class FileDataMapper implements DataMapper {
         }
     }
 
-
     public Object load(long id, Class clazz) {
         try {
             Object result = clazz.newInstance();
             String confFileName = clazz.getSimpleName() + CONF_EXT;
             String dataFileName = clazz.getSimpleName() + DATA_EXT;
-
             String[] strFields = findLineWithId(id, dataFileName);
-
             List<String> fieldsName = loadConfigFile(confFileName);
 
             return getObject(fieldsName, strFields, result);
@@ -84,9 +78,7 @@ public class FileDataMapper implements DataMapper {
         String confFileName = clazz.getSimpleName() + CONF_EXT;
         File dataFile = new File(getPath() + dataFileName);
         List<String> fieldsName = loadConfigFile(confFileName);
-
         Scanner sc = null;
-
         try {
             sc = new Scanner(dataFile);
         } catch (FileNotFoundException e) {
@@ -96,11 +88,8 @@ public class FileDataMapper implements DataMapper {
         if (sc != null) {
             while (sc.hasNextLine()) {
                 String[] line = sc.nextLine().split(":");
-
             }
         }
-
-
     }
 
     public void update(Object o) {
@@ -108,6 +97,7 @@ public class FileDataMapper implements DataMapper {
     }
 
 //    //конструктор с id
+
 //    public FileDataMapper() throws FileNotFoundException {
 //        File f = new File("C:\\Users\\tish\\IdeaProjects\\Core\\Lesson4\\src\\dataMapper\\id.conf");
 //        Scanner sc = new Scanner(f);
@@ -121,7 +111,6 @@ public class FileDataMapper implements DataMapper {
         String[] result = null;
         File dataFile = new File(getPath() + fName);
         Scanner sc = null;
-
         try {
             sc = new Scanner(dataFile);
         } catch (FileNotFoundException e) {
@@ -142,7 +131,6 @@ public class FileDataMapper implements DataMapper {
         List<String> result = new ArrayList<>();
         File confFile = new File(getPath() + fName);
         Scanner sc = null;
-
         try {
             sc = new Scanner(confFile);
         } catch (FileNotFoundException e) {
@@ -166,6 +154,7 @@ public class FileDataMapper implements DataMapper {
             } catch (NoSuchFieldException e) {
                 e.printStackTrace();
             }
+
             f.setAccessible(true);
 
             if (f.getType().equals(String.class)) {
@@ -185,8 +174,8 @@ public class FileDataMapper implements DataMapper {
             } else if (f.getType().equals(boolean.class)) {
                 f.set(o, Boolean.parseBoolean(strFields[i]));
             }
-
         }
+
         return o;
     }
 

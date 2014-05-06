@@ -19,7 +19,7 @@ public class Main {
 //        dm.save(u3);
 //        dm.save(u4);
 
-        User u = (User) dm.load(3, User.class);
+        User u = (User) dm.load(2, User.class);
         System.out.println(u.getId() + " " + u.getName() + " " + u.getSalary());
 
     }
