@@ -12,10 +12,6 @@ public class FileDataMapper implements DataMapper {
     public static final String CONF_EXT = ".conf";
     private HashMap<String, Integer> idMap = new HashMap<>();
 
-//    public FileDataMapper() {
-//
-//    }
-
     public void save(Object o) {
         String className = o.getClass().getSimpleName();
         String confFileName = className + CONF_EXT;
