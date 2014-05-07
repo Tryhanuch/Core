@@ -70,14 +70,10 @@ public class FileDataMapper implements DataMapper {
         return null;
     }
 
-    public void loadAll(Class clazz) {
-
-//        Object result = clazz.newInstance();
-
+    public List<Object> loadAll(Class clazz){
+        List<Object> result = new ArrayList<>();
         String dataFileName = clazz.getSimpleName() + DATA_EXT;
-        String confFileName = clazz.getSimpleName() + CONF_EXT;
         File dataFile = new File(getPath() + dataFileName);
-        List<String> fieldsName = loadConfigFile(confFileName);
         Scanner sc = null;
         try {
             sc = new Scanner(dataFile);
@@ -85,11 +81,18 @@ public class FileDataMapper implements DataMapper {
             e.printStackTrace();
         }
 
-        if (sc != null) {
-            while (sc.hasNextLine()) {
-                String[] line = sc.nextLine().split(":");
-            }
+        List<Long> id = new ArrayList<>();
+
+        while (sc.hasNextLine()){
+            String[] line = sc.nextLine().split(":");
+            id.add(Long.parseLong(line[0]));
         }
+
+        for (int i = 0; i < id.size(); i++) {
+            result.add(load(id.get(i), clazz));
+        }
+
+        return result;
     }
 
     public void update(Object o) {

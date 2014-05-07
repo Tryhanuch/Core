@@ -1,5 +1,7 @@
 package dataMapper;
 
+import java.util.List;
+
 /**
  * Created by tish on 27.04.2014.
  */
@@ -21,6 +23,14 @@ public class Main {
 
         User u = (User) dm.load(2, User.class);
         System.out.println(u.getId() + " " + u.getName() + " " + u.getSalary());
+
+        List<Object> all = dm.loadAll(User.class);
+        for (int i = 0; i < all.size(); i++) {
+            User user = (User) all.get(i);
+            System.out.println(user.getId() + " " + user.getName() + " " + user.getSalary());
+        }
+
+
 
     }
 }

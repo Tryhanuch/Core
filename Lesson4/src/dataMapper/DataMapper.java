@@ -2,6 +2,7 @@ package dataMapper;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by tish on 04.05.2014.
@@ -12,7 +13,7 @@ public interface DataMapper {
 
     Object load (long id, Class clazz) throws FileNotFoundException;
 
-    void loadAll (Class clazz);
+    List<Object> loadAll (Class clazz);
 
     void update (Object o);
 }
