@@ -17,9 +17,9 @@ public class FileDataMapper implements DataMapper {
         String confFileName = className + CONF_EXT;
         String dataFileName = className + DATA_EXT;
         File dataFile = new File(getPath() + dataFileName);
-        FileWriter fw = null;
+        BufferedWriter bf = null;
         try {
-            fw = new FileWriter(dataFile, true);
+            bf = new BufferedWriter(new FileWriter(dataFile, true));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -37,17 +37,18 @@ public class FileDataMapper implements DataMapper {
             }
         }
 
+        assert bf != null;
         for (int i = 0; i < fields.size(); i++) {
             try {
-                fw.write(String.valueOf(fields.get(i).get(o)) + ":");
+                bf.write(String.valueOf(fields.get(i).get(o)) + ":");
             } catch (IllegalAccessException | IOException e) {
                 e.printStackTrace();
             }
         }
 
         try {
-            fw.write("\n");
-            fw.close();
+            bf.write("\n");
+            bf.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -74,18 +75,24 @@ public class FileDataMapper implements DataMapper {
         List<Object> result = new ArrayList<>();
         String dataFileName = clazz.getSimpleName() + DATA_EXT;
         File dataFile = new File(getPath() + dataFileName);
-        Scanner sc = null;
+        BufferedReader br = null;
         try {
-            sc = new Scanner(dataFile);
+            br = new BufferedReader(new FileReader(dataFile));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 
         List<Long> id = new ArrayList<>();
 
-        while (sc.hasNextLine()){
-            String[] line = sc.nextLine().split(":");
-            id.add(Long.parseLong(line[0]));
+        String s;
+        try {
+            assert br != null;
+            while ((s = br.readLine()) != null){
+                String[] line = s.split(":");
+                id.add(Long.parseLong(line[0]));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         for (int i = 0; i < id.size(); i++) {
@@ -113,18 +120,24 @@ public class FileDataMapper implements DataMapper {
     private String[] findLineWithId(long id, String fName) {
         String[] result = null;
         File dataFile = new File(getPath() + fName);
-        Scanner sc = null;
+        BufferedReader br = null;
         try {
-            sc = new Scanner(dataFile);
+            br = new BufferedReader(new FileReader(dataFile));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 
-        while (sc.hasNextLine()) {
-            String[] line = sc.nextLine().split(":");
-            if (Long.parseLong(line[0]) == id) {
-                result = line;
+        String s;
+        try {
+            assert br != null;
+            while ((s = br.readLine()) != null) {
+                String[] line = s.split(":");
+                if (Long.parseLong(line[0]) == id) {
+                    result = line;
+                }
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         return result;
@@ -133,17 +146,21 @@ public class FileDataMapper implements DataMapper {
     private List<String> loadConfigFile(String fName) {
         List<String> result = new ArrayList<>();
         File confFile = new File(getPath() + fName);
-        Scanner sc = null;
+        BufferedReader br = null;
         try {
-            sc = new Scanner(confFile);
+            br = new BufferedReader(new FileReader(confFile));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 
-        if (sc != null) {
-            while (sc.hasNext()) {
-                result.add(sc.next());
+        String s;
+        try {
+            assert br != null;
+            while ((s = br.readLine()) != null) {
+                result.add(s);
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         return result;
@@ -158,6 +175,7 @@ public class FileDataMapper implements DataMapper {
                 e.printStackTrace();
             }
 
+            assert f != null;
             f.setAccessible(true);
 
             if (f.getType().equals(String.class)) {

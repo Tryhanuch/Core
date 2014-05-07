@@ -24,6 +24,7 @@ public class Main {
         User u = (User) dm.load(2, User.class);
         System.out.println(u.getId() + " " + u.getName() + " " + u.getSalary());
 
+        System.out.println();
         List<Object> all = dm.loadAll(User.class);
         for (int i = 0; i < all.size(); i++) {
             User user = (User) all.get(i);
