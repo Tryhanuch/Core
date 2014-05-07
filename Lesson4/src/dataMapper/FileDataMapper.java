@@ -103,7 +103,9 @@ public class FileDataMapper implements DataMapper {
     }
 
     public void update(Object o) {
-
+//        use method mark()
+//        Reader r = new Reader();
+//        r.mark();
     }
 
 //    //конструктор с id

@@ -1,7 +1,5 @@
 package dataMapper;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -9,9 +7,9 @@ import java.util.List;
  */
 public interface DataMapper {
 
-    void save (Object o) throws IOException;
+    void save (Object o);
 
-    Object load (long id, Class clazz) throws FileNotFoundException;
+    Object load (long id, Class clazz);
 
     List<Object> loadAll (Class clazz);
 
