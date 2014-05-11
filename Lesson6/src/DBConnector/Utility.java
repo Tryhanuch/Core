@@ -20,7 +20,7 @@ public class Utility {
         return null;
     }
 
-    public List<User> load(String db, String table) {
+    public List<User> loadAll(String db, String table) {
         Connection con = getConnection(db);
         List<User> result = new ArrayList<>();
 

@@ -11,7 +11,7 @@ public class Main {
         String table = "user";
 
         Utility utility = new Utility();
-        List<User> users = utility.load(db, table);
+        List<User> users = utility.loadAll(db, table);
 
         for (int i = 0; i < users.size(); i++) {
             System.out.println(users.get(i).getFirstName() + " " +
