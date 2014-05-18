@@ -7,6 +7,7 @@ public class Main {
     public static void main(String[] args) {
 //        FileDataMapper dm = new FileDataMapper();
 //
+//        rewrite by SecondUser;
 //        User u0 = new User("Alex", 7800);
 //        User u1 = new User("Max", 5500);
 //        User u2 = new User("Pit", 2100);
@@ -34,15 +35,17 @@ public class Main {
         User nu = new User("Kolia", "Loboda", 22, 5000);
         User nu1 = new User("Clark", "Kent", 24, 3750);
 
-        Car car = new Car("VW", "Golf", 22000);
+        Car car0 = new Car("VW", "Golf", 22000);
         Car car1 = new Car("Mercedes", "Vito", 47000);
 
 //        dbdm.save(nu);
-//        dbdm.save(car);
-
 //        dbdm.save(nu1);
+//
+//        dbdm.save(car0);
 //        dbdm.save(car1);
 
+        Car car = (Car) dbdm.load(1, Car.class);
+        System.out.println(car.getMark() + " " + car.getPrice());
 
     }
 }

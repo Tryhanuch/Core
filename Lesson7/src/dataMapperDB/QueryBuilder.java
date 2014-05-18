@@ -28,7 +28,12 @@ public class QueryBuilder {
         }
 
         String sql = "INSERT INTO " + tableName + " (" + params + ") VALUES(" + values +")";
+        return sql;
+    }
 
+    public static String buildSelectByIdSQL(Object o, long id){
+        String tableName = o.getClass().getSimpleName();
+        String sql = "SELECT * FROM " + tableName + " WHERE ID = " + id;
         return sql;
     }
 
@@ -62,6 +67,7 @@ public class QueryBuilder {
 
         try {
             property.load(new FileInputStream
+                    /////////////////////////////////TODO
                     ("C:\\Users\\tish\\IdeaProjects\\Core\\Lesson7\\src\\dataMapperDB\\files\\config.properties"));
             path = property.getProperty("dir.path");
         } catch (IOException e) {

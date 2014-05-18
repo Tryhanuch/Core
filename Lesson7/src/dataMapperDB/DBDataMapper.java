@@ -2,10 +2,7 @@ package dataMapperDB;
 
 import java.io.*;
 import java.lang.reflect.Field;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -15,6 +12,7 @@ import java.util.Properties;
  * Created by tish on 11.05.2014.
  */
 public class DBDataMapper implements DataMapper {
+    //TODO
     public static final String DB_DRIVER = "com.mysql.jdbc.Driver";
     public static final String DB_CONNECTION = "jdbc:mysql://localhost/my_schema?";
     public static final String DB_USERNAME = "root";
@@ -23,6 +21,11 @@ public class DBDataMapper implements DataMapper {
     private Connection connection;
 
     public DBDataMapper(){
+
+    }
+
+    //Connection setting!
+    {
         try {
             Class.forName(DB_DRIVER);
             connection = DriverManager.getConnection(DB_CONNECTION, DB_USERNAME, DB_PASSWORD);
@@ -48,7 +51,7 @@ public class DBDataMapper implements DataMapper {
         }
 
         String sql = QueryBuilder.buildInsertSQL(o);
-        PreparedStatement s = null;
+        PreparedStatement s;
         try {
             s = connection.prepareStatement(sql);
             int x = 1;
@@ -80,6 +83,19 @@ public class DBDataMapper implements DataMapper {
     }
 
     public Object load(long id, Class clazz) {
+        String confFileName = clazz.getSimpleName() + CONF_EXT;
+        try {
+            Object result = clazz.newInstance();
+            String sql = QueryBuilder.buildSelectByIdSQL(result, id);
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
+            String[] strFields = parseLine(resultSet, confFileName);
+            List<String> fieldsName = loadConfigFile(confFileName);
+
+            return getObject(fieldsName, strFields, result);
+        } catch (InstantiationException | IllegalAccessException | SQLException e1) {
+            e1.printStackTrace();
+        }
         return null;
     }
 
@@ -115,6 +131,75 @@ public class DBDataMapper implements DataMapper {
         return result;
     }
 
+    private String[] parseLine(ResultSet rs, String fName){
+        String[] result;
+        File confFile = new File(getPath() + fName);
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new FileReader(confFile));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        int count = 0;
+        String s;
+        try {
+            assert br != null;
+            while ((s = br.readLine()) != null) {
+                count++;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        result = new String[count];
+        try {
+            while (rs.next()){
+                for (int i = 0; i < result.length; i++) {
+                    result[i] = rs.getString(i + 1);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+    private Object getObject(List<String> fieldsName, String[] strFields, Object o) throws IllegalAccessException {
+        for (int i = 0; i < fieldsName.size(); i++) {
+            Field f = null;
+            try {
+                f = o.getClass().getDeclaredField(fieldsName.get(i));
+            } catch (NoSuchFieldException e) {
+                e.printStackTrace();
+            }
+
+            assert f != null;
+            f.setAccessible(true);
+
+            if (f.getType().equals(String.class)) {
+                f.set(o, strFields[i]);
+            } else if (f.getType().equals(int.class)) {
+                f.set(o, Integer.parseInt(strFields[i]));
+            } else if (f.getType().equals(long.class)) {
+                f.set(o, Long.parseLong(strFields[i]));
+            } else if (f.getType().equals(byte.class)) {
+                f.set(o, Byte.parseByte(strFields[i]));
+            } else if (f.getType().equals(double.class)) {
+                f.set(o, Double.parseDouble(strFields[i]));
+            } else if (f.getType().equals(float.class)) {
+                f.set(o, Float.parseFloat(strFields[i]));
+            } else if (f.getType().equals(short.class)) {
+                f.set(o, Short.parseShort(strFields[i]));
+            } else if (f.getType().equals(boolean.class)) {
+                f.set(o, Boolean.parseBoolean(strFields[i]));
+            }
+        }
+
+        return o;
+    }
+
     private String getPath() {
         String path = null;
         Properties property = new Properties();
@@ -129,4 +214,5 @@ public class DBDataMapper implements DataMapper {
 
         return path;
     }
+
 }
