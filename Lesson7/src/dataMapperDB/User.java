@@ -1,8 +1,11 @@
 package dataMapperDB;
 
+import dataMapperDB.annotations.Entity;
+
 /**
  * Created by tish on 11.05.2014.
  */
+@Entity(name = "User")
 public class User {
     private String firstName;
     private String lastName;
