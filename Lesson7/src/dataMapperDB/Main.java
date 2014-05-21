@@ -1,5 +1,7 @@
 package dataMapperDB;
 
+import java.util.List;
+
 /**
  * Created by tish on 27.04.2014.
  */
@@ -34,18 +36,30 @@ public class Main {
 
         User nu = new User("Kolia", "Loboda", 22, 5000);
         User nu1 = new User("Clark", "Kent", 24, 3750);
+        User nu2 = new User("Piter", "Pan", 30, 8750);
 
         Car car0 = new Car("VW", "Golf", 22000);
         Car car1 = new Car("Mercedes", "Vito", 47000);
 
 //        dbdm.save(nu);
 //        dbdm.save(nu1);
-//
+//        dbdm.save(nu2);
+
 //        dbdm.save(car0);
 //        dbdm.save(car1);
 
-        Car car = (Car) dbdm.load(1, Car.class);
-        System.out.println(car.getMark() + " " + car.getPrice());
+        User user = (User) dbdm.load(3, User.class);
+        System.out.println(user.getId() + " " + user.getFirstName() + " " + user.getLastName() + " " + user.getAge()
+                + " " + user.getSalary());
+
+        System.out.println();
+        List<Object> users = dbdm.loadAll(User.class);
+        for (int i = 0; i < users.size(); i++) {
+            User u = (User) users.get(i);
+            System.out.println(u.getId() + " " + u.getFirstName() + " " + u.getLastName() + " " + u.getAge()
+                    + " " + u.getSalary());
+        }
+
 
     }
 }

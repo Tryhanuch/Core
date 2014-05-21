@@ -1,5 +1,6 @@
 package dataMapperDB;
 
+import dataMapperDB.annotations.Column;
 import dataMapperDB.annotations.Entity;
 
 /**
@@ -7,9 +8,13 @@ import dataMapperDB.annotations.Entity;
  */
 @Entity(name = "Car")
 public class Car {
+    @Column(name = "MARK")
     private String mark;
+    @Column(name = "MODEL")
     private String model;
+    @Column(name = "PRICE")
     private int price;
+    @Column(name = "ID")
     private long id;
 
     public Car(String mark, String model, int coast) {

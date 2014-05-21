@@ -1,5 +1,7 @@
 package dataMapperDB;
 
+import dataMapperDB.annotations.Entity;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,10 +11,11 @@ import java.util.Properties;
  * Created by tish on 11.05.2014.
  */
 public class QueryBuilder {
+
     public static final String CONF_EXT = ".conf";
 
     public static String buildInsertSQL(Object o){
-        String tableName = o.getClass().getSimpleName();
+        String tableName = o.getClass().getAnnotation(Entity.class).name();
         String confFileName = tableName + CONF_EXT;
 
         List<String> conf = loadConfigFile(confFileName);
@@ -32,8 +35,14 @@ public class QueryBuilder {
     }
 
     public static String buildSelectByIdSQL(Object o, long id){
-        String tableName = o.getClass().getSimpleName();
+        String tableName = o.getClass().getAnnotation(Entity.class).name();
         String sql = "SELECT * FROM " + tableName + " WHERE ID = " + id;
+        return sql;
+    }
+
+    public static String buildSelectAllSQL(Object o){
+        String tableName = o.getClass().getAnnotation(Entity.class).name();
+        String sql = "SELECT * FROM " + tableName;
         return sql;
     }
 
@@ -67,7 +76,7 @@ public class QueryBuilder {
 
         try {
             property.load(new FileInputStream
-                    /////////////////////////////////TODO
+                    //TODO to the project
                     ("C:\\Users\\tish\\IdeaProjects\\Core\\Lesson7\\src\\dataMapperDB\\files\\config.properties"));
             path = property.getProperty("dir.path");
         } catch (IOException e) {
@@ -76,4 +85,5 @@ public class QueryBuilder {
 
         return path;
     }
+
 }

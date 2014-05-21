@@ -1,5 +1,6 @@
 package dataMapperDB;
 
+import dataMapperDB.annotations.Column;
 import dataMapperDB.annotations.Entity;
 
 /**
@@ -7,14 +8,18 @@ import dataMapperDB.annotations.Entity;
  */
 @Entity(name = "Student")
 public class Student {
+    @Column(name = "FIRST_NAME")
     private String firstName;
-    private String secondName;
+    @Column(name = "LAST_NAME")
+    private String lastName;
+    @Column(name = "AGE")
     private int age;
+    @Column(name = "ID")
     private long id;
 
     public Student(String firstName, String secondName, int age) {
         this.firstName = firstName;
-        this.secondName = secondName;
+        this.lastName = secondName;
         this.age = age;
     }
 
@@ -27,12 +32,12 @@ public class Student {
         this.firstName = firstName;
     }
 
-    public String getSecondName() {
-        return secondName;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setSecondName(String secondName) {
-        this.secondName = secondName;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
     public int getAge() {

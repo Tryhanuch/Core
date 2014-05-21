@@ -12,7 +12,7 @@ import java.util.Properties;
  * Created by tish on 11.05.2014.
  */
 public class DBDataMapper implements DataMapper {
-    //TODO
+    //TODO to property file
     public static final String DB_DRIVER = "com.mysql.jdbc.Driver";
     public static final String DB_CONNECTION = "jdbc:mysql://localhost/my_schema?";
     public static final String DB_USERNAME = "root";
@@ -84,23 +84,53 @@ public class DBDataMapper implements DataMapper {
 
     public Object load(long id, Class clazz) {
         String confFileName = clazz.getSimpleName() + CONF_EXT;
+
         try {
             Object result = clazz.newInstance();
+
             String sql = QueryBuilder.buildSelectByIdSQL(result, id);
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(sql);
-            String[] strFields = parseLine(resultSet, confFileName);
+
+            List<String[]> line = parseLine(resultSet, confFileName);
             List<String> fieldsName = loadConfigFile(confFileName);
 
-            return getObject(fieldsName, strFields, result);
+            for (int i = 0; i < line.size(); i++) {
+                String[] strFields = line.get(i);
+                result = getObject(fieldsName, strFields, result);
+            }
+
+            return result;
         } catch (InstantiationException | IllegalAccessException | SQLException e1) {
             e1.printStackTrace();
         }
+
         return null;
     }
 
     public List<Object> loadAll(Class clazz) {
-        return null;
+        List<Object> result = new ArrayList<>();
+        String confFileName = clazz.getSimpleName() + CONF_EXT;
+
+        try {
+            String sql = QueryBuilder.buildSelectAllSQL(clazz.newInstance());
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(sql);
+
+            List<String[]> line = parseLine(resultSet, confFileName);
+            List<String> fieldsName = loadConfigFile(confFileName);
+
+            for (int i = 0; i < line.size(); i++) {
+                Object object = clazz.newInstance();
+                String[] strFields = line.get(i);
+                object = getObject(fieldsName, strFields, object);
+                result.add(object);
+            }
+        } catch (InstantiationException | IllegalAccessException | SQLException e) {
+            e.printStackTrace();
+        }
+
+        return result;
     }
 
     public void update(Object o) {
@@ -131,8 +161,8 @@ public class DBDataMapper implements DataMapper {
         return result;
     }
 
-    private String[] parseLine(ResultSet rs, String fName){
-        String[] result;
+    private List<String[]> parseLine(ResultSet rs, String fName){
+        List<String[]> result = new ArrayList<>();
         File confFile = new File(getPath() + fName);
         BufferedReader br = null;
         try {
@@ -152,12 +182,14 @@ public class DBDataMapper implements DataMapper {
             e.printStackTrace();
         }
 
-        result = new String[count];
         try {
             while (rs.next()){
-                for (int i = 0; i < result.length; i++) {
-                    result[i] = rs.getString(i + 1);
+                String[] line = new String[count];
+                for (int i = 0; i < line.length; i++) {
+                    line[i] = rs.getString(i + 1);
                 }
+
+                result.add(line);
             }
         } catch (SQLException e) {
             e.printStackTrace();
