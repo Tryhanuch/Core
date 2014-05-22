@@ -1,4 +1,4 @@
-package dataMapperDB.annotations;
+package mapper.anntt;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

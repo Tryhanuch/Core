@@ -1,4 +1,7 @@
-package dataMapperDB;
+package mapper.mpp;
+
+import mapper.DataMapper;
+import mapper.sql.QueryBuilder;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -12,23 +15,34 @@ import java.util.Properties;
  * Created by tish on 11.05.2014.
  */
 public class DBDataMapper implements DataMapper {
-    //TODO to property file
-    public static final String DB_DRIVER = "com.mysql.jdbc.Driver";
-    public static final String DB_CONNECTION = "jdbc:mysql://localhost/my_schema?";
-    public static final String DB_USERNAME = "root";
-    public static final String DB_PASSWORD = "36Dkr840";
     public static final String CONF_EXT = ".conf";
-    private Connection connection;
+    private static Connection connection;
 
     public DBDataMapper(){
 
     }
 
     //Connection setting!
-    {
+    static {
+        String driver = null;
+        String con = null;
+        String username = null;
+        String password = null;
+        Properties property = new Properties();
+
         try {
-            Class.forName(DB_DRIVER);
-            connection = DriverManager.getConnection(DB_CONNECTION, DB_USERNAME, DB_PASSWORD);
+            property.load(new FileInputStream("config.properties"));
+            driver = property.getProperty("db.driver");
+            con = property.getProperty("db.connection");
+            username = property.getProperty("db.username");
+            password = property.getProperty("db.password");
+        } catch (IOException e) {
+            System.err.println("ERROR! Property file is not found!");
+        }
+
+        try {
+            Class.forName(driver);
+            connection = DriverManager.getConnection(con, username, password);
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
@@ -137,30 +151,6 @@ public class DBDataMapper implements DataMapper {
 
     }
 
-    private List<String> loadConfigFile(String fName) {
-        List<String> result = new ArrayList<>();
-        File confFile = new File(getPath() + fName);
-        BufferedReader br = null;
-        try {
-            br = new BufferedReader(new FileReader(confFile));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        String s;
-        try {
-            assert br != null;
-            while ((s = br.readLine()) != null) {
-                String[] st = s.split(":");
-                result.add(st[0]);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return result;
-    }
-
     private List<String[]> parseLine(ResultSet rs, String fName){
         List<String[]> result = new ArrayList<>();
         File confFile = new File(getPath() + fName);
@@ -232,13 +222,36 @@ public class DBDataMapper implements DataMapper {
         return o;
     }
 
+    private List<String> loadConfigFile(String fName) {
+        List<String> result = new ArrayList<>();
+        File confFile = new File(getPath() + fName);
+        BufferedReader br = null;
+        try {
+            br = new BufferedReader(new FileReader(confFile));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        String s;
+        try {
+            assert br != null;
+            while ((s = br.readLine()) != null) {
+                String[] st = s.split(":");
+                result.add(st[0]);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
     private String getPath() {
         String path = null;
         Properties property = new Properties();
 
         try {
-            property.load(new FileInputStream
-                    ("C:\\Users\\tish\\IdeaProjects\\Core\\Lesson7\\src\\dataMapperDB\\files\\config.properties"));
+            property.load(new FileInputStream("config.properties"));
             path = property.getProperty("dir.path");
         } catch (IOException e) {
             System.err.println("ERROR! Property file is not found!");

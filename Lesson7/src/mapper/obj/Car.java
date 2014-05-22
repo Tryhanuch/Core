@@ -1,7 +1,7 @@
-package dataMapperDB;
+package mapper.obj;
 
-import dataMapperDB.annotations.Column;
-import dataMapperDB.annotations.Entity;
+import mapper.anntt.Column;
+import mapper.anntt.Entity;
 
 /**
  * Created by tish on 11.05.2014.

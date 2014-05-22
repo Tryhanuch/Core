@@ -1,4 +1,8 @@
-package dataMapperDB;
+package mapper;
+
+import mapper.mpp.DBDataMapper;
+import mapper.obj.Car;
+import mapper.obj.User;
 
 import java.util.List;
 
@@ -7,6 +11,7 @@ import java.util.List;
  */
 public class Main {
     public static void main(String[] args) {
+
 //        FileDataMapper dm = new FileDataMapper();
 //
 //        rewrite by SecondUser;

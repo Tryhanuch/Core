@@ -1,6 +1,6 @@
-package dataMapperDB;
+package mapper.sql;
 
-import dataMapperDB.annotations.Entity;
+import mapper.anntt.Entity;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -75,9 +75,7 @@ public class QueryBuilder {
         Properties property = new Properties();
 
         try {
-            property.load(new FileInputStream
-                    //TODO to the project
-                    ("C:\\Users\\tish\\IdeaProjects\\Core\\Lesson7\\src\\dataMapperDB\\files\\config.properties"));
+            property.load(new FileInputStream("config.properties"));
             path = property.getProperty("dir.path");
         } catch (IOException e) {
             System.err.println("ERROR! Property file is not found!");
