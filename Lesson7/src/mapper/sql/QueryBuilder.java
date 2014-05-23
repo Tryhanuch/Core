@@ -11,7 +11,6 @@ import java.util.Properties;
  * Created by tish on 11.05.2014.
  */
 public class QueryBuilder {
-
     public static final String CONF_EXT = ".conf";
 
     public static String buildInsertSQL(Object o){
@@ -43,6 +42,24 @@ public class QueryBuilder {
     public static String buildSelectAllSQL(Object o){
         String tableName = o.getClass().getAnnotation(Entity.class).name();
         String sql = "SELECT * FROM " + tableName;
+        return sql;
+    }
+
+    public static String buildUpdateSQL(Object o, long id){
+        String tableName = o.getClass().getAnnotation(Entity.class).name();
+        String confFileName = tableName + CONF_EXT;
+
+        List<String> conf = loadConfigFile(confFileName);
+
+        String params = "";
+        for (int i = 0; i < conf.size(); i++) {
+            if (!conf.get(i).equals("ID")){
+                if (i != (conf.size() - 1))params = params + conf.get(i) + "=?, ";
+                else params = params + conf.get(i) + "=?";
+            }
+        }
+
+        String sql = "UPDATE " + tableName + " SET " + params + " WHERE ID = " + id;
         return sql;
     }
 

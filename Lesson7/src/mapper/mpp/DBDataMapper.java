@@ -18,6 +18,7 @@ public class DBDataMapper implements DataMapper {
     public static final String CONF_EXT = ".conf";
     private static Connection connection;
 
+    //Constructor!
     public DBDataMapper(){
 
     }
@@ -48,6 +49,7 @@ public class DBDataMapper implements DataMapper {
         }
     }
 
+    //Basic interface methods!
     public void save(Object o){
         String confFileName = o.getClass().getSimpleName() + CONF_EXT;
 
@@ -65,35 +67,9 @@ public class DBDataMapper implements DataMapper {
         }
 
         String sql = QueryBuilder.buildInsertSQL(o);
-        PreparedStatement s;
-        try {
-            s = connection.prepareStatement(sql);
-            int x = 1;
-            for (int i = 0; i < fields.size(); i++) {
-                if (fields.get(i).getType().equals(String.class)){
-                    s.setString(x, String.valueOf(fields.get(i).get(o)));
-                }else if (fields.get(i).getType().equals(int.class)){
-                    s.setInt(x, Integer.parseInt(String.valueOf(fields.get(i).get(o))));
-                }else if (fields.get(i).getType().equals(long.class)){
-                    s.setLong(x, Long.parseLong(String.valueOf(fields.get(i).get(o))));
-                }else if (fields.get(i).getType().equals(byte.class)){
-                    s.setByte(x, Byte.parseByte(String.valueOf(fields.get(i).get(o))));
-                }else if (fields.get(i).getType().equals(double.class)){
-                    s.setDouble(x, Double.parseDouble(String.valueOf(fields.get(i).get(o))));
-                }else if (fields.get(i).getType().equals(float.class)){
-                    s.setFloat(x, Float.parseFloat(String.valueOf(fields.get(i).get(o))));
-                }else if (fields.get(i).getType().equals(short.class)){
-                    s.setShort(x, Short.parseShort(String.valueOf(fields.get(i).get(o))));
-                }else if (fields.get(i).getType().equals(boolean.class)){
-                    s.setBoolean(x, Boolean.parseBoolean(String.valueOf(fields.get(i).get(o))));
-                }
-                x++;
-            }
-            s.executeUpdate();
 
-        } catch (SQLException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        // PreparedStatement method!
+        addToTable(o, fields, sql);
     }
 
     public Object load(long id, Class clazz) {
@@ -148,7 +124,65 @@ public class DBDataMapper implements DataMapper {
     }
 
     public void update(Object o) {
+        String confFileName = o.getClass().getSimpleName() + CONF_EXT;
 
+        List<String> fieldsName = loadConfigFile(confFileName);
+        ArrayList<Field> fields = new ArrayList<>();
+
+        int id = 0;
+
+        for (int i = 0; i < fieldsName.size(); i++) {
+            try {
+                Field f = o.getClass().getDeclaredField(fieldsName.get(i));
+                f.setAccessible(true);
+
+                if (fieldsName.get(i).equals("id")){
+                    id = Integer.parseInt(String.valueOf(f.get(o)));
+                }else {
+                    fields.add(f);
+                }
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+
+        String sql = QueryBuilder.buildUpdateSQL(o, id);
+
+        // PreparedStatement method!
+        addToTable(o, fields, sql);
+    }
+
+    //Other compatible methods!
+    private void addToTable(Object o, ArrayList<Field> fields, String sql) {
+        PreparedStatement ps;
+        try {
+            ps = connection.prepareStatement(sql);
+            int x = 1;
+            for (int i = 0; i < fields.size(); i++) {
+                if (fields.get(i).getType().equals(String.class)){
+                    ps.setString(x, String.valueOf(fields.get(i).get(o)));
+                }else if (fields.get(i).getType().equals(int.class)){
+                    ps.setInt(x, Integer.parseInt(String.valueOf(fields.get(i).get(o))));
+                }else if (fields.get(i).getType().equals(long.class)){
+                    ps.setLong(x, Long.parseLong(String.valueOf(fields.get(i).get(o))));
+                }else if (fields.get(i).getType().equals(byte.class)){
+                    ps.setByte(x, Byte.parseByte(String.valueOf(fields.get(i).get(o))));
+                }else if (fields.get(i).getType().equals(double.class)){
+                    ps.setDouble(x, Double.parseDouble(String.valueOf(fields.get(i).get(o))));
+                }else if (fields.get(i).getType().equals(float.class)){
+                    ps.setFloat(x, Float.parseFloat(String.valueOf(fields.get(i).get(o))));
+                }else if (fields.get(i).getType().equals(short.class)){
+                    ps.setShort(x, Short.parseShort(String.valueOf(fields.get(i).get(o))));
+                }else if (fields.get(i).getType().equals(boolean.class)){
+                    ps.setBoolean(x, Boolean.parseBoolean(String.valueOf(fields.get(i).get(o))));
+                }
+                x++;
+            }
+            ps.executeUpdate();
+
+        } catch (SQLException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     private List<String[]> parseLine(ResultSet rs, String fName){
